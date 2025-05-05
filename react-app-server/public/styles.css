@@ -1,42 +1,194 @@
 html, body {
-    margin: 0;
-    padding: 0;
-    height: 100%;
-    overflow: hidden;
-    background: black;
-  }
-  
-  canvas {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    display: block;
-  }
-  
-  /* Кнопка съёмки */
-  #captureBtn {
-    position: absolute;
-    bottom: 20px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 60px;
-    height: 60px;
-    border-radius: 50%;
-    background: #C82647;
-    color: white;
-    border: none;
-    font-size: 24px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    box-shadow: 0 0 10px rgba(200, 38, 71, 0.5);
-    transition: background 0.3s ease;
-  }
-  
-  #captureBtn:hover {
-    background: #a61f3a;
-  }
-  
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  overflow: hidden;
+  background: black;
+}
+
+canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  transform: scaleX(-1);
+}
+
+/* Стили кнопки */
+#captureBtn {
+  position: fixed;  /* Фиксируем кнопку внизу */
+  bottom: 20px;     /* Расстояние от низа экрана */
+  left: 50%;
+  transform: translateX(-50%); /* Центрируем кнопку по горизонтали */
+  width: 70px;      /* Размер кнопки */
+  height: 70px;     /* Размер кнопки */
+  border-radius: 50%;
+  background: #C82647;
+  color: white;
+  border: none;
+  font-size: 30px;   /* Размер иконки */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 0 10px rgba(200, 38, 71, 0.5);
+  transition: background 0.3s ease;
+  z-index: 10; /* Для того, чтобы кнопка была поверх других элементов */
+}
+
+#captureBtn:hover {
+  background: #a61f3a;
+}
+
+/* Кольцо вокруг кнопки */
+#captureBtn .button-ring {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border: 5px solid white;
+  border-radius: 50%;
+  pointer-events: none; /* Кольцо не будет взаимодействовать с кликами */
+  box-sizing: border-box;
+}
+#modeButtons {
+  position: fixed;
+  bottom: 110px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 15px;
+  z-index: 10;
+}
+
+.icon-btn {
+  width: 60px;
+  height: 60px;
+  border-radius: 15px;
+  background: rgba(255, 255, 255, 0.75);
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.3s ease, transform 0.2s ease;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  backdrop-filter: blur(4px);
+  padding: 0;
+}
+
+.icon-btn img {
+  width: 28px;
+  height: 28px;
+  object-fit: contain;
+  pointer-events: none;
+}
+
+.icon-btn:hover {
+  background: rgba(240, 240, 240, 0.9);
+}
+
+.icon-btn.active {
+  background: #c82647;
+}
+
+/* Контейнер для кнопок интенсивности и цвета */
+#controls {
+  position: fixed;
+  bottom: 170px; /* немного выше кнопки камеры */
+  z-index: 20; /* Чтобы кнопки не перекрывались */
+  width: 100%; /* Расширяем на всю ширину экрана */
+  opacity: 0; /* Скрываем кнопки */
+  visibility: hidden; /* Делаем кнопки невидимыми */
+  transition: opacity 0.3s ease, visibility 0.3s ease; /* Плавное появление/скрытие */
+}
+
+/* Стили кнопок */
+.control-btn {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.75);
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.3s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(4px);
+  padding: 0;
+  position: absolute; /* Абсолютное позиционирование */
+}
+
+/* Иконки внутри кнопок */
+.control-btn img {
+  width: 30px;
+  height: 30px;
+  object-fit: contain;
+  pointer-events: none;
+}
+
+/* Позиционирование кнопок */
+#intensityBtn {
+  left: 20px; /* Кнопка слева */
+}
+
+#colorBtn {
+  right: 20px; /* Кнопка справа */
+}
+
+/* Эффект наведения */
+.control-btn:hover {
+  background: rgba(240, 240, 240, 0.9);
+}
+
+
+.range-control {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.7);  /* Полупрозрачный фон для затемнения */
+  display: none;  /* Скрыть ползунок по умолчанию */
+  align-items: center;
+  justify-content: center;
+  z-index: 30;
+}
+
+#intensitySlider {
+  width: 80%;
+  margin: 0 auto;
+  height: 10px;
+  background: rgba(255, 255, 255, 0.5);
+  border-radius: 5px;
+  -webkit-appearance: none;
+  outline: none;
+}
+
+#intensitySlider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  background: #c82647;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+#intensityControl {
+  display: none;
+  position: absolute;
+  bottom: 50%; /* регулируй по высоте, чтобы не мешал */
+  left: 5%;
+  width: 90%; /* оставляет по 5% с каждой стороны */
+  background: rgba(255, 255, 255, 0);
+  padding: 12px;
+  border-radius: 12px;
+  z-index: 10;
+  text-align: center;
+}

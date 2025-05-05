@@ -10,7 +10,42 @@
 </head>
 <body>
   <canvas id="overlay"></canvas>
-  <button id="captureBtn"><i class="fas fa-camera"></i></button>
+  
+  <div id="modeButtons">
+    <button class="icon-btn" id="browsBtn">
+      <img src="icons/eyebrows.png" alt="Brows" />
+    </button>
+    <button class="icon-btn" id="lipsBtn">
+      <img src="icons/lips.png" alt="Lips" />
+    </button>
+    <button class="icon-btn" id="cheeksBtn">
+      <img src="icons/blush.png" alt="Cheeks" />
+    </button>
+  </div>
+
+  
+  <!-- Кнопки для изменения интенсивности и цвета, изначально скрыты -->
+  <div id="controls">
+    <button class="control-btn" id="intensityBtn">
+      <img src="icons/intensity.png" alt="Intensity" />
+    </button>
+     <div id="intensityControl">
+      <input type="range" id="intensitySlider" min="0" max="100" value="50">
+    </div> 
+    <button class="control-btn" id="colorBtn">
+      <img src="icons/color.png" alt="Color" />
+    </button>
+  </div>
+  
+
+  <!-- Кнопка с кольцом вокруг -->
+  <button id="captureBtn">
+    <span class="button-ring"></span> <!-- Кольцо вокруг кнопки -->
+    <i class="fas fa-camera"></i>
+  </button>
+
+
+
   <script src="%PUBLIC_URL%/script.js"></script>
 </body>
 </html>

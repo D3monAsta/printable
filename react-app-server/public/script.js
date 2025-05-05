@@ -26,8 +26,6 @@ const camera = new Camera(videoElement, {
   onFrame: async () => {
     await faceMesh.send({ image: videoElement });
   },
-  width: 640,
-  height: 480,
 });
 camera.start();
 
@@ -162,3 +160,71 @@ function scalePoint(point) {
     y: point.y * canvasElement.height
   };
 }
+
+
+function toggleControlButtons(show) {
+  if (show) {
+    controls.style.opacity = 1;
+    controls.style.visibility = 'visible';
+  } else {
+    controls.style.opacity = 0;
+    controls.style.visibility = 'hidden';
+  }
+}
+
+function deactivateOtherButtons(exceptButton) {
+  const buttons = [browsBtn, lipsBtn, cheeksBtn];
+  buttons.forEach(btn => {
+    if (btn !== exceptButton) {
+      btn.classList.remove('active');
+    }
+  });
+}
+
+function updateControlVisibility() {
+  if (
+    browsBtn.classList.contains('active') ||
+    lipsBtn.classList.contains('active') ||
+    cheeksBtn.classList.contains('active')
+  ) {
+    toggleControlButtons(true);
+  } else {
+    toggleControlButtons(false);
+  }
+}
+
+browsBtn.addEventListener('click', () => {
+  const isActive = browsBtn.classList.toggle('active');
+  if (isActive) {
+    deactivateOtherButtons(browsBtn);
+  }
+  toggleControlButtons(browsBtn.classList.contains('active'));
+  updateControlVisibility();
+});
+
+lipsBtn.addEventListener('click', () => {
+  const isActive = lipsBtn.classList.toggle('active');
+  if (isActive) {
+    deactivateOtherButtons(lipsBtn);
+  }
+  toggleControlButtons(lipsBtn.classList.contains('active'));
+  updateControlVisibility();
+});
+
+cheeksBtn.addEventListener('click', () => {
+  const isActive = cheeksBtn.classList.toggle('active');
+  if (isActive) {
+    deactivateOtherButtons(cheeksBtn);
+  }
+  toggleControlButtons(cheeksBtn.classList.contains('active'));
+  updateControlVisibility();
+});
+
+const intensityControl = document.getElementById('intensityControl');
+const intensityBtn = document.getElementById('intensityBtn');
+let isIntensityVisible = false;
+
+intensityBtn.addEventListener('click', () => {
+  isIntensityVisible = !isIntensityVisible;
+  intensityControl.style.display = isIntensityVisible ? 'block' : 'none';
+});
