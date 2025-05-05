@@ -2,6 +2,7 @@
   "name": "react-app-server",
   "version": "0.1.0",
   "private": true,
+  "workspaces": ["react-app-server"],
   "dependencies": {
     "@testing-library/dom": "^10.4.0",
     "@testing-library/jest-dom": "^6.6.3",
@@ -14,7 +15,7 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "react-scripts build",
+    "build": "npm run build --prefix react-app-server",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
