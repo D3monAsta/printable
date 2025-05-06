@@ -1,6 +1,15 @@
 const canvasElement = document.getElementById('overlay');
 const canvasCtx = canvasElement.getContext('2d');
 
+prozlips = 0;
+rgblips = '(255, 0, 0';
+
+prozbrowz = 0;
+rgbbrowz = '(255, 0, 0';
+
+prozblush = 0;
+rgbblush = '(255, 0, 0';
+
 // Скрытый video-элемент для захвата камеры (не добавляется в DOM)
 const videoElement = document.createElement('video');
 videoElement.autoplay = true;
@@ -89,7 +98,7 @@ function drawLips(ctx, landmarks) {
   const innerLips = [78, 95, 88, 178, 87, 14, 317, 402, 318, 324, 308, 415, 310, 311, 312, 13, 82, 81, 80];
 
   ctx.save();
-  ctx.fillStyle = 'rgba(255, 0, 0, 0.5)';
+  ctx.fillStyle = 'rgba' + rgblips + ', ' + prozlips/100 +')';
   ctx.lineJoin = 'round';
   ctx.filter = 'blur(1px)';
 
@@ -106,7 +115,7 @@ function drawEyebrows(ctx, landmarks) {
   const rightBrow = [336, 296, 334, 293, 300, 276, 283, 282, 295, 285];
 
   ctx.save();
-  ctx.fillStyle = 'rgba(80, 40, 20, 0.5)';
+  ctx.fillStyle = 'rgba' + rgbbrowz + ', ' + prozbrowz/100 +')';
   ctx.lineJoin = 'round';
   ctx.filter = 'blur(0.7px)';
 
@@ -128,11 +137,14 @@ function drawCheeks(ctx, landmarks) {
   const rightCheek = [356, 372, 449, 330, 425, 366];
   const nose = [51, 5, 281, 275, 1, 45];
 
+
+
+
   ctx.save();
-  ctx.fillStyle = 'rgba(255, 105, 180, 0.25)';
+  ctx.fillStyle = 'rgba' + rgbblush + ', ' + prozblush/100 +')';
   ctx.lineJoin = 'round';
   ctx.filter = 'blur(4px)';
-  ctx.shadowColor = 'rgba(255, 105, 180, 0.3)';
+  ctx.shadowColor = 'rgba' + rgbblush + ', ' + prozblush/100 +')';
   ctx.shadowBlur = 15;
 
   ctx.beginPath();
@@ -160,6 +172,28 @@ function scalePoint(point) {
     y: point.y * canvasElement.height
   };
 }
+
+// document.getElementById("captureBtn").addEventListener("click", () => {
+//   const flatCanvas = document.getElementById("makeupFlatCanvas");
+//   const ctx = flatCanvas.getContext("2d");
+//   ctx.clearRect(0, 0, flatCanvas.width, flatCanvas.height);
+
+//   // 1. Получаем текущие landmarks
+//   const landmarks = lastFaceLandmarks; // предположим, ты их хранишь при каждом кадре
+
+//   // 2. Нормализуем landmarks
+//   const normalizedPoints = normalizeFace(landmarks, flatCanvas.width, flatCanvas.height);
+
+//   // 3. Рисуем макияж на нейтральном лице
+//   drawMakeupOnFlatCanvas(ctx, normalizedPoints);
+
+//   // 4. Скачиваем PNG
+//   const dataURL = flatCanvas.toDataURL("/image");
+//   const link = document.createElement("a");
+//   link.href = dataURL;
+//   link.download = "makeup_template.png";
+//   link.click();
+// });
 
 
 function toggleControlButtons(show) {
@@ -220,11 +254,102 @@ cheeksBtn.addEventListener('click', () => {
   updateControlVisibility();
 });
 
+const colorBtn = document.getElementById('colorBtn');
+const colorControl = document.getElementById('colorControl');
 const intensityControl = document.getElementById('intensityControl');
 const intensityBtn = document.getElementById('intensityBtn');
-let isIntensityVisible = false;
 
+// Обработчик для кнопки "Интенсивность"
 intensityBtn.addEventListener('click', () => {
-  isIntensityVisible = !isIntensityVisible;
-  intensityControl.style.display = isIntensityVisible ? 'block' : 'none';
+  const isVisible = intensityControl.style.display === 'block';
+  intensityControl.style.display = isVisible ? 'none' : 'block';
+  colorControl.style.display = 'none'; // Скрываем палитру, если была открыта
+});
+
+// Обработчик для кнопки "Цвет"
+colorBtn.addEventListener('click', () => {
+  const isVisible = colorControl.style.display === 'block';
+  colorControl.style.display = isVisible ? 'none' : 'block';
+  intensityControl.style.display = 'none'; // Скрываем интенсивность, если была открыта
+});
+
+
+function getActiveButton() {
+  if (browsBtn.classList.contains('active')) {
+    return 'browsBtn'; // Если кнопка бровей активна
+  } else if (lipsBtn.classList.contains('active')) {
+    return 'lipsBtn'; // Если кнопка губ активна
+  } else if (cheeksBtn.classList.contains('active')) {
+    return 'cheeksBtn'; // Если кнопка румян активна
+  } else {
+    return null; // Если ни одна кнопка не нажата
+  }
+}
+
+
+const colorSlider = document.getElementById('colorSlider');
+
+// Получение цвета по hue
+function hueToRGB(hue) {
+  const s = 1;  // Насытимость (можно изменить по желанию)
+  const l = 0.5; // Светлотa (можно изменить по желанию)
+
+  // Преобразование HSL в RGB
+  const c = (1 - Math.abs(2 * l - 1)) * s;
+  const x = c * (1 - Math.abs((hue / 60) % 2 - 1));
+  const m = l - c / 2;
+
+  let r, g, b;
+  if (hue >= 0 && hue < 60) {
+    r = c; g = x; b = 0;
+  } else if (hue >= 60 && hue < 120) {
+    r = x; g = c; b = 0;
+  } else if (hue >= 120 && hue < 180) {
+    r = 0; g = c; b = x;
+  } else if (hue >= 180 && hue < 240) {
+    r = 0; g = x; b = c;
+  } else if (hue >= 240 && hue < 300) {
+    r = x; g = 0; b = c;
+  } else {
+    r = c; g = 0; b = x;
+  }
+
+  // Преобразуем значения от 0 до 1 в 0-255
+  r = Math.round((r + m) * 255);
+  g = Math.round((g + m) * 255);
+  b = Math.round((b + m) * 255);
+
+  return `(${r}, ${g}, ${b}`; // Возвращаем цвет в формате rgb
+}
+
+colorSlider.addEventListener('input', () => {
+  const hue = parseInt(colorSlider.value);
+  const selectedColor = hueToRGB(hue);
+  console.log('Выбранный цвет:', selectedColor);
+  if (getActiveButton() == 'browsBtn') {
+    rgbbrowz = selectedColor;
+  }
+  if (getActiveButton() == 'lipsBtn') {
+    rgblips = selectedColor;
+  }
+  if (getActiveButton() == 'cheeksBtn') {
+    rgbblush = selectedColor;
+  }
+});
+
+const intensitySlider = document.getElementById('intensitySlider');
+
+// Обработчик для ползунка прозрачности
+intensitySlider.addEventListener('input', () => {
+  const intensity = parseFloat(intensitySlider.value); // Получаем значение ползунка (от 0 до 1)
+  console.log('Интенсивность прозрачности:', intensity); // Выводим значение интенсивности
+  if (getActiveButton() == 'browsBtn') {
+    prozbrowz = intensity;
+  }
+  if (getActiveButton() == 'lipsBtn') {
+    prozlips = intensity;
+  }
+  if (getActiveButton() == 'cheeksBtn') {
+    prozblush = intensity;
+  }
 });
