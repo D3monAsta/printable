@@ -7,7 +7,7 @@ function ExistingWebsite() {
         src={`${process.env.PUBLIC_URL}/index.html`} 
         title="Existing Website"
         style={{ width: '100%', height: '100%', border: 'none' }}
-        sandbox="allow-same-origin allow-scripts allow-popups allow-forms"
+        sandbox="allow-same-origin allow-scripts"
       />
     </div>
   );
